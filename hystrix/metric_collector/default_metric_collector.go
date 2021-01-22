@@ -3,7 +3,7 @@ package metricCollector
 import (
 	"sync"
 
-	"github.com/afex/hystrix-go/hystrix/rolling"
+	"github.com/imttx/hystrix-go/hystrix/rolling"
 )
 
 // DefaultMetricCollector holds information about the circuit state.
