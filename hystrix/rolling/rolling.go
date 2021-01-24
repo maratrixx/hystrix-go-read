@@ -5,8 +5,7 @@ import (
 	"time"
 )
 
-// Number tracks a numberBucket over a bounded number of
-// time buckets. Currently the buckets are one second long and only the last 10 seconds are kept.
+// Number 在一定数量的时间段内跟踪 numberBucket, 当前存储桶（numberBucket）长一秒，仅保留最后 10s
 type Number struct {
 	Buckets map[int64]*numberBucket
 	Mutex   *sync.RWMutex
@@ -16,7 +15,7 @@ type numberBucket struct {
 	Value float64
 }
 
-// NewNumber initializes a RollingNumber struct.
+// 初始化 Number
 func NewNumber() *Number {
 	r := &Number{
 		Buckets: make(map[int64]*numberBucket),
@@ -25,6 +24,7 @@ func NewNumber() *Number {
 	return r
 }
 
+// 获取当前时间戳对应的 numberBucket
 func (r *Number) getCurrentBucket() *numberBucket {
 	now := time.Now().Unix()
 	var bucket *numberBucket
@@ -38,6 +38,7 @@ func (r *Number) getCurrentBucket() *numberBucket {
 	return bucket
 }
 
+// 移除 10s 以前的 numberBucket
 func (r *Number) removeOldBuckets() {
 	now := time.Now().Unix() - 10
 
@@ -49,7 +50,7 @@ func (r *Number) removeOldBuckets() {
 	}
 }
 
-// Increment increments the number in current timeBucket.
+// 增加当前时间对应的 numberBucket 值
 func (r *Number) Increment(i float64) {
 	if i == 0 {
 		return
@@ -58,24 +59,24 @@ func (r *Number) Increment(i float64) {
 	r.Mutex.Lock()
 	defer r.Mutex.Unlock()
 
-	b := r.getCurrentBucket()
-	b.Value += i
-	r.removeOldBuckets()
+	b := r.getCurrentBucket() // 获取当前 numberBucket
+	b.Value += i              // numberBucket.Value += i
+	r.removeOldBuckets()      // 移除 10s 以前的 numberBucket
 }
 
-// UpdateMax updates the maximum value in the current bucket.
+// UpdateMax 更新当前存储桶中的最大值
 func (r *Number) UpdateMax(n float64) {
 	r.Mutex.Lock()
 	defer r.Mutex.Unlock()
 
 	b := r.getCurrentBucket()
-	if n > b.Value {
+	if n > b.Value { // 只有当大于当前值时进行更新
 		b.Value = n
 	}
 	r.removeOldBuckets()
 }
 
-// Sum sums the values over the buckets in the last 10 seconds.
+// Sum 对过去 10s 内桶内的数值求和
 func (r *Number) Sum(now time.Time) float64 {
 	sum := float64(0)
 
@@ -92,7 +93,7 @@ func (r *Number) Sum(now time.Time) float64 {
 	return sum
 }
 
-// Max returns the maximum value seen in the last 10 seconds.
+// Max 获取过去 10s 内桶内的最大值
 func (r *Number) Max(now time.Time) float64 {
 	var max float64
 
@@ -111,6 +112,7 @@ func (r *Number) Max(now time.Time) float64 {
 	return max
 }
 
+// Avg 计算过去 10s 内的平均值
 func (r *Number) Avg(now time.Time) float64 {
 	return r.Sum(now) / 10
 }

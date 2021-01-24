@@ -40,20 +40,20 @@ func (m *metricCollectorRegistry) Register(initMetricCollector func(string) Metr
 }
 
 type MetricResult struct {
-	Attempts                float64
-	Errors                  float64
-	Successes               float64
-	Failures                float64
-	Rejects                 float64
-	ShortCircuits           float64
-	Timeouts                float64
-	FallbackSuccesses       float64
-	FallbackFailures        float64
-	ContextCanceled         float64
-	ContextDeadlineExceeded float64
-	TotalDuration           time.Duration
-	RunDuration             time.Duration
-	ConcurrencyInUse        float64
+	Attempts                float64       // 请求数
+	Errors                  float64       // 错误数
+	Successes               float64       // 成功数
+	Failures                float64       // 失败数
+	Rejects                 float64       // 拒绝数
+	ShortCircuits           float64       // 熔断数
+	Timeouts                float64       // 超时数
+	FallbackSuccesses       float64       // 降级成功数
+	FallbackFailures        float64       // 降级失败数
+	ContextCanceled         float64       // contxt 被取消数
+	ContextDeadlineExceeded float64       // context 超时数
+	TotalDuration           time.Duration // 总耗时（到达 moniter 计算的总耗时）
+	RunDuration             time.Duration // 运行总耗时
+	ConcurrencyInUse        float64       // 并发占比
 }
 
 // MetricCollector represents the contract that all collectors must fulfill to gather circuit statistics.

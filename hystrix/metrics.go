@@ -4,15 +4,16 @@ import (
 	"sync"
 	"time"
 
-	"github.com/imttx/hystrix-go/hystrix/metric_collector"
+	metricCollector "github.com/imttx/hystrix-go/hystrix/metric_collector"
 	"github.com/imttx/hystrix-go/hystrix/rolling"
 )
 
+// 命令指标
 type commandExecution struct {
-	Types            []string      `json:"types"`
-	Start            time.Time     `json:"start_time"`
-	RunDuration      time.Duration `json:"run_duration"`
-	ConcurrencyInUse float64       `json:"concurrency_inuse"`
+	Types            []string      `json:"types"`             // 事件列表
+	Start            time.Time     `json:"start_time"`        // 开始时间
+	RunDuration      time.Duration `json:"run_duration"`      // 运行耗时
+	ConcurrencyInUse float64       `json:"concurrency_inuse"` // 当前并发量占比
 }
 
 type metricExchange struct {
@@ -130,21 +131,24 @@ func (m *metricExchange) requestsLocked() *rolling.Number {
 	return m.DefaultCollector().NumRequests()
 }
 
+// 计算最近 10s 内的请求错误率
 func (m *metricExchange) ErrorPercent(now time.Time) int {
 	m.Mutex.RLock()
 	defer m.Mutex.RUnlock()
 
 	var errPct float64
-	reqs := m.requestsLocked().Sum(now)
-	errs := m.DefaultCollector().Errors().Sum(now)
+	reqs := m.requestsLocked().Sum(now)            // 计算过去 10s 内累计的请求数
+	errs := m.DefaultCollector().Errors().Sum(now) // 计算过去 10s 内累计的请求失败数
 
 	if reqs > 0 {
 		errPct = (float64(errs) / float64(reqs)) * 100
 	}
 
+	// 向上取整，好奇为什么不直接用 math.Ceil(errPct)
 	return int(errPct + 0.5)
 }
 
+// 根据错误率计算当前健康度，当错误率到达阈值返回 false，未达到阈值返回 true
 func (m *metricExchange) IsHealthy(now time.Time) bool {
 	return m.ErrorPercent(now) < getSettings(m.Name).ErrorPercentThreshold
 }

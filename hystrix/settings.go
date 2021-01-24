@@ -26,7 +26,7 @@ var (
 type Settings struct {
 	Timeout                time.Duration // 等待 command 完成的时间，默认 1000ms
 	MaxConcurrentRequests  int           // 同一个 command 支持的并发量，默认 10
-	RequestVolumeThreshold uint64        // 触发开启熔断的最新请求量，相当于 sentinel 的静默请求数量，默认 20
+	RequestVolumeThreshold uint64        // 触发开启熔断的最小请求量，相当于 sentinel 的静默请求数量，默认 20
 	SleepWindow            time.Duration // 当熔断器被打开后，控制过多久后去尝试探测服务是否可用了，默认值是 5000ms
 	ErrorPercentThreshold  int           // 错误百分比，当错误比例达到此值后触发熔断
 }

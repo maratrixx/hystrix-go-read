@@ -7,9 +7,8 @@ import (
 	"time"
 )
 
-// Timing maintains time Durations for each time bucket.
-// The Durations are kept in an array to allow for a variety of
-// statistics to be calculated from the source data.
+// Timing 维护每个时间段的时间持续时间。
+// 持续时间保存在数组中，以允许从源数据计算各种统计信息。
 type Timing struct {
 	Buckets map[int64]*timingBucket
 	Mutex   *sync.RWMutex
