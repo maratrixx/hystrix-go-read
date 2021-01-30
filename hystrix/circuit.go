@@ -16,7 +16,7 @@ type CircuitBreaker struct {
 	openedOrLastTestedTime int64         //	上一次尝试检查服务是否恢复的时间戳
 
 	executorPool *executorPool   // 运行池+相关运行统计指标
-	metrics      *metricExchange // 命令指标
+	metrics      *metricExchange // 统计收集器
 }
 
 var (

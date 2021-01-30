@@ -24,7 +24,7 @@ func NewNumber() *Number {
 	return r
 }
 
-// 获取当前时间戳对应的 numberBucket
+// 获取当前时间戳对应的 numberBucket，不存在时创建
 func (r *Number) getCurrentBucket() *numberBucket {
 	now := time.Now().Unix()
 	var bucket *numberBucket

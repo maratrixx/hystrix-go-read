@@ -15,21 +15,21 @@ import (
 type DefaultMetricCollector struct {
 	mutex *sync.RWMutex
 
-	numRequests *rolling.Number
-	errors      *rolling.Number
+	numRequests *rolling.Number // 统计请求总数
+	errors      *rolling.Number // 统计错误总数
 
-	successes               *rolling.Number
-	failures                *rolling.Number
-	rejects                 *rolling.Number
-	shortCircuits           *rolling.Number
-	timeouts                *rolling.Number
-	contextCanceled         *rolling.Number
-	contextDeadlineExceeded *rolling.Number
+	successes               *rolling.Number // 统计请求成功数
+	failures                *rolling.Number // 统计请求失败数
+	rejects                 *rolling.Number // 统计请求被拒绝数（触发限流）
+	shortCircuits           *rolling.Number // 统计请求被熔断数
+	timeouts                *rolling.Number // 统计请求超时数
+	contextCanceled         *rolling.Number // 统计请求 ctx 被取消数
+	contextDeadlineExceeded *rolling.Number // 统计请求 ctx 超时数
 
-	fallbackSuccesses *rolling.Number
-	fallbackFailures  *rolling.Number
-	totalDuration     *rolling.Timing
-	runDuration       *rolling.Timing
+	fallbackSuccesses *rolling.Number // 统计 fallback 成功数
+	fallbackFailures  *rolling.Number // 统计 fallback 失败数
+	totalDuration     *rolling.Timing // 统计所有请求总耗时
+	runDuration       *rolling.Timing // 统计当个请求耗时
 }
 
 func newDefaultMetricCollector(name string) MetricCollector {
